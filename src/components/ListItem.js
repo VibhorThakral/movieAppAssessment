@@ -1,22 +1,43 @@
-import React from 'react';
+import React, {Component} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
+import {connect} from 'react-redux';
 
 const POSTERURI = 'https://image.tmdb.org/t/p/w185';
 
-const gridViewDisabled = (poster, title) => {
+const getRating = rating => {
+  if (rating >= 7) {
+    return 'green';
+  } else if (rating > 4 && rating < 7) {
+    return 'rgba(255,255,0,0.5)';
+  } else {
+    return 'red';
+  }
+};
+
+const gridViewDisabled = (
+  poster,
+  title,
+  rating,
+  language,
+  releaseDate,
+  genres,
+) => {
+  const year = releaseDate.substr(0, releaseDate.indexOf('-'));
   const posterPath = POSTERURI + poster;
   return (
     <TouchableOpacity style={[styles.container, listStyles.container]}>
       <Image style={listStyles.img} source={{uri: posterPath}} />
       <View style={listStyles.rightView}>
         <Text style={listStyles.title}>{title}</Text>
-        <View>
-          <Text style={listStyles.detail}>Year</Text>
-          <Text style={listStyles.detail}>Language</Text>
+        <View style={listStyles.descView}>
+          <Text style={listStyles.detail}>{year}</Text>
+          <View style={listStyles.borderView} />
+          <Text style={listStyles.detail}>{language}</Text>
         </View>
-        <Text style={listStyles.detail}>Genre Array</Text>
-        <View style={listStyles.rateView}>
-          <Text style={listStyles.rateViewText}>Rate Count</Text>
+        <Text style={listStyles.detail}>{genres}</Text>
+        <View
+          style={[listStyles.rateView, {backgroundColor: getRating(rating)}]}>
+          <Text style={listStyles.rateViewText}>{rating}</Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -33,11 +54,27 @@ const gridViewEnabled = (poster, title) => {
   );
 };
 
-const ListItem = ({isGrid, poster, title}) => {
-  return isGrid
-    ? gridViewEnabled(poster, title)
-    : gridViewDisabled(poster, title);
-};
+class ListItem extends Component {
+  checkGenreType = () => {
+    const genres = this.props.genres;
+    const allGenres = this.props.genreData;
+    const currGenres = [];
+
+    allGenres.map(item => {
+      genres.map(ele => item.id === ele && currGenres.push(item.name + '  '));
+    });
+
+    return currGenres;
+  };
+
+  render() {
+    const {isGrid, poster, title, rating, language, releaseDate} = this.props;
+    const genres = this.checkGenreType();
+    return isGrid
+      ? gridViewEnabled(poster, title)
+      : gridViewDisabled(poster, title, rating, language, releaseDate, genres);
+  }
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -72,13 +109,23 @@ const listStyles = StyleSheet.create({
   rateView: {
     position: 'absolute',
     bottom: 10,
-    backgroundColor: 'green',
-    padding: 5,
+    paddingVertical: 5,
+    paddingHorizontal: 15,
     borderRadius: 50,
   },
   rateViewText: {
     textAlign: 'center',
     color: 'white',
+  },
+  descView: {
+    flexDirection: 'row',
+  },
+  borderView: {
+    marginHorizontal: 10,
+    borderWidth: 0.65,
+    borderColor: 'gray',
+    height: '70%',
+    alignSelf: 'center',
   },
 });
 
@@ -96,4 +143,8 @@ const gridStyles = StyleSheet.create({
   },
 });
 
-export default ListItem;
+const mapStateToProps = state => ({
+  genreData: state.home.genresList,
+});
+
+export default connect(mapStateToProps)(ListItem);

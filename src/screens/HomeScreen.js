@@ -20,6 +20,7 @@ import {
   getMostPopularMovies,
   getHighestRevenueMovie,
   getLowestRevenueMovie,
+  getMovieGenres,
 } from '../services/Home/action';
 
 // const DATA = jsonData.results;
@@ -33,7 +34,8 @@ class HomeScreen extends Component {
   }
 
   componentDidMount() {
-    this.props.getOldestMoviesByRelease();
+    this.props.getMovieGenres();
+    this.props.getMovies();
   }
 
   changeListView = () => {
@@ -80,7 +82,11 @@ class HomeScreen extends Component {
                 <ListItem
                   isGrid={gridView}
                   poster={ele.item.poster_path}
-                  title={ele.item.original_title}
+                  title={ele.item.title}
+                  releaseDate={ele.item.release_date}
+                  language={ele.item.original_language}
+                  rating={ele.item.vote_average}
+                  genres={ele.item.genre_ids}
                 />
               );
             }}
@@ -146,6 +152,7 @@ const mapDispatchToProps = dispatch => ({
   getMostPopularMovies: () => dispatch(getMostPopularMovies()),
   getHighestRevenueMovie: () => dispatch(getHighestRevenueMovie()),
   getLowestRevenueMovie: () => dispatch(getLowestRevenueMovie()),
+  getMovieGenres: () => dispatch(getMovieGenres()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);
