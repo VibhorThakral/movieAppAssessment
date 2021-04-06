@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import {connect} from 'react-redux';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const POSTERURI = 'https://image.tmdb.org/t/p/w185';
 
@@ -23,10 +24,16 @@ const gridViewDisabled = (
   genres,
 ) => {
   const year = releaseDate.substr(0, releaseDate.indexOf('-'));
+  console.log(poster);
   const posterPath = POSTERURI + poster;
   return (
     <TouchableOpacity style={[styles.container, listStyles.container]}>
-      <Image style={listStyles.img} source={{uri: posterPath}} />
+      {poster === null ? (
+        <Icon name="image-off-outline" size={50} color="white" />
+      ) : (
+        <Image style={listStyles.img} source={{uri: posterPath}} />
+      )}
+
       <View style={listStyles.rightView}>
         <Text style={listStyles.title}>{title}</Text>
         <View style={listStyles.descView}>

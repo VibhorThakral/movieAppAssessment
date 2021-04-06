@@ -22,6 +22,7 @@ import {
   getLowestRevenueMovie,
   getMovieGenres,
 } from '../services/Home/action';
+import FilterComponent from '../components/FilterComponent';
 
 // const DATA = jsonData.results;
 
@@ -30,6 +31,8 @@ class HomeScreen extends Component {
     super(props);
     this.state = {
       gridView: false,
+      modalVisible: false,
+      activeFilter: 'Most Popular',
     };
   }
 
@@ -38,26 +41,55 @@ class HomeScreen extends Component {
     this.props.getMovies();
   }
 
+  componentDidUpdate() {
+    switch (this.state.activeFilter) {
+      case 'Releases':
+        return this.props.getLatestMoviesByRelease();
+      case 'Old Movies':
+        return this.props.getOldestMoviesByRelease();
+      case 'Most Popular':
+        return this.props.getMostPopularMovies();
+      case 'Least Popular':
+        return this.props.getLeastPopularMovies();
+      case 'Highest Grossing':
+        return this.props.getHighestRevenueMovie();
+      case 'Least Grossing':
+        return this.props.getLowestRevenueMovie();
+    }
+  }
+
   changeListView = () => {
     this.setState({
       gridView: !this.state.gridView,
     });
   };
 
+  changeModalView = () => {
+    this.setState({
+      modalVisible: !this.state.modalVisible,
+    });
+  };
+
+  activeFilter = value => {
+    this.setState({
+      activeFilter: value,
+    });
+  };
+
   render() {
-    const {gridView} = this.state;
+    const {gridView, activeFilter} = this.state;
     const movieData = this.props.movieData;
     return (
       <View style={styles.container}>
         <View style={styles.topBar}>
           <Text style={styles.topBarText}>Home</Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => this.changeModalView()}>
             <Icon name="filter" color="gray" size={25} />
           </TouchableOpacity>
         </View>
         <View style={styles.listWrapper}>
           <View style={styles.listTopBar}>
-            <Text style={styles.listTypeText}>Most Popular</Text>
+            <Text style={styles.listTypeText}>{activeFilter}</Text>
             <TouchableOpacity
               onPress={() => this.changeListView()}
               style={
@@ -92,6 +124,11 @@ class HomeScreen extends Component {
             }}
           />
         </View>
+        <FilterComponent
+          activeFilter={value => this.activeFilter(value)}
+          onDismiss={() => this.changeModalView()}
+          visible={this.state.modalVisible}
+        />
       </View>
     );
   }
