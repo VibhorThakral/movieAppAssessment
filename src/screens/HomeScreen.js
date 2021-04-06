@@ -1,11 +1,91 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+  FlatList,
+} from 'react-native';
+import Icon from 'react-native-vector-icons/Feather';
+import ListItem from '../components/ListItem';
+import jsonData from '../../jsonData.json';
+import {connect} from 'react-redux';
+import {
+  getMovies,
+  getOldestMoviesByRelease,
+  getLatestMoviesByRelease,
+  getLeastPopularMovies,
+  getMostPopularMovies,
+  getHighestRevenueMovie,
+  getLowestRevenueMovie,
+} from '../services/Home/action';
+
+// const DATA = jsonData.results;
 
 class HomeScreen extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      gridView: false,
+    };
+  }
+
+  componentDidMount() {
+    this.props.getOldestMoviesByRelease();
+  }
+
+  changeListView = () => {
+    this.setState({
+      gridView: !this.state.gridView,
+    });
+  };
+
   render() {
+    const {gridView} = this.state;
+    const movieData = this.props.movieData;
     return (
       <View style={styles.container}>
-        <Text style={styles.text}>Home Screen</Text>
+        <View style={styles.topBar}>
+          <Text style={styles.topBarText}>Home</Text>
+          <TouchableOpacity>
+            <Icon name="filter" color="gray" size={25} />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.listWrapper}>
+          <View style={styles.listTopBar}>
+            <Text style={styles.listTypeText}>Most Popular</Text>
+            <TouchableOpacity
+              onPress={() => this.changeListView()}
+              style={
+                gridView ? styles.gridViewActive : styles.gridViewInactive
+              }>
+              {gridView ? (
+                <Icon name="grid" size={25} color="gray" />
+              ) : (
+                <Icon name="grid" size={25} color="gray" />
+              )}
+            </TouchableOpacity>
+          </View>
+          <FlatList
+            bounces={false}
+            data={movieData}
+            keyExtractor={item => item.id}
+            key={gridView ? 2 : 1}
+            style={styles.flatList}
+            numColumns={gridView ? 2 : 1}
+            renderItem={ele => {
+              return (
+                <ListItem
+                  isGrid={gridView}
+                  poster={ele.item.poster_path}
+                  title={ele.item.original_title}
+                />
+              );
+            }}
+          />
+        </View>
       </View>
     );
   }
@@ -14,13 +94,58 @@ class HomeScreen extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: '#191919',
   },
-  text: {
-    color: 'white',
+  topBar: {
+    padding: 15,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderBottomColor: '#333',
+    borderBottomWidth: 0.4,
+  },
+  topBarText: {
+    color: 'gray',
+    fontSize: 18,
+  },
+  listWrapper: {
+    padding: 15,
+  },
+  listTopBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  listTypeText: {
+    fontSize: 22,
+    color: 'gray',
+  },
+  gridViewActive: {
+    backgroundColor: '#333',
+    padding: 10,
+    borderRadius: 100,
+  },
+  gridViewInactive: {
+    padding: 10,
+    borderRadius: 100,
+  },
+  flatList: {
+    marginBottom: 100,
   },
 });
 
-export default HomeScreen;
+const mapStateToProps = state => ({
+  movieData: state.home.movieList,
+});
+
+const mapDispatchToProps = dispatch => ({
+  getMovies: () => dispatch(getMovies()),
+  getOldestMoviesByRelease: () => dispatch(getOldestMoviesByRelease()),
+  getLatestMoviesByRelease: () => dispatch(getLatestMoviesByRelease()),
+  getLeastPopularMovies: () => dispatch(getLeastPopularMovies()),
+  getMostPopularMovies: () => dispatch(getMostPopularMovies()),
+  getHighestRevenueMovie: () => dispatch(getHighestRevenueMovie()),
+  getLowestRevenueMovie: () => dispatch(getLowestRevenueMovie()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);
