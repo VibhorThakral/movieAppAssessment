@@ -41,20 +41,22 @@ class HomeScreen extends Component {
     this.props.getMovies();
   }
 
-  componentDidUpdate() {
-    switch (this.state.activeFilter) {
-      case 'Releases':
-        return this.props.getLatestMoviesByRelease();
-      case 'Old Movies':
-        return this.props.getOldestMoviesByRelease();
-      case 'Most Popular':
-        return this.props.getMostPopularMovies();
-      case 'Least Popular':
-        return this.props.getLeastPopularMovies();
-      case 'Highest Grossing':
-        return this.props.getHighestRevenueMovie();
-      case 'Least Grossing':
-        return this.props.getLowestRevenueMovie();
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState !== this.state) {
+      switch (this.state.activeFilter) {
+        case 'Releases':
+          return this.props.getLatestMoviesByRelease();
+        case 'Old Movies':
+          return this.props.getOldestMoviesByRelease();
+        case 'Most Popular':
+          return this.props.getMostPopularMovies();
+        case 'Least Popular':
+          return this.props.getLeastPopularMovies();
+        case 'Highest Grossing':
+          return this.props.getHighestRevenueMovie();
+        case 'Least Grossing':
+          return this.props.getLowestRevenueMovie();
+      }
     }
   }
 

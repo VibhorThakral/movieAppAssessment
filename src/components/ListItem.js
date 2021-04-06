@@ -24,12 +24,16 @@ const gridViewDisabled = (
   genres,
 ) => {
   const year = releaseDate.substr(0, releaseDate.indexOf('-'));
-  console.log(poster);
   const posterPath = POSTERURI + poster;
   return (
     <TouchableOpacity style={[styles.container, listStyles.container]}>
       {poster === null ? (
-        <Icon name="image-off-outline" size={50} color="white" />
+        <Icon
+          name="image-off-outline"
+          style={listStyles.img}
+          size={150}
+          color="white"
+        />
       ) : (
         <Image style={listStyles.img} source={{uri: posterPath}} />
       )}
@@ -55,7 +59,16 @@ const gridViewEnabled = (poster, title) => {
   const posterPath = POSTERURI + poster;
   return (
     <TouchableOpacity style={styles.container}>
-      <Image source={{uri: posterPath}} style={gridStyles.img} />
+      {poster === null ? (
+        <Icon
+          name="image-off-outline"
+          style={gridStyles.img}
+          size={150}
+          color="white"
+        />
+      ) : (
+        <Image style={gridStyles.img} source={{uri: posterPath}} />
+      )}
       <Text style={gridStyles.title}>{title}</Text>
     </TouchableOpacity>
   );
