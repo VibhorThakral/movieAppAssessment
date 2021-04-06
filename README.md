@@ -28,3 +28,6 @@ https://www.themoviedb.org/documentation/api
 4. API Documentation : https://developers.themoviedb.org/3/discover/movie-discover
 
 Use Redux to implement API and follow proper code structure
+
+## Output
+<img src="./src/assets/ios_output.gif" width="300px"></img>

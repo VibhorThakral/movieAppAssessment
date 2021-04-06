@@ -24,8 +24,6 @@ import {
 } from '../services/Home/action';
 import FilterComponent from '../components/FilterComponent';
 
-// const DATA = jsonData.results;
-
 class HomeScreen extends Component {
   constructor(props) {
     super(props);
